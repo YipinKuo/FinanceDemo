@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="utf-8">
+    <title>台積電金融儀表板</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- ECharts CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --main-bg-light: #f5f7fa;
+            --main-bg-dark: #20232a;
+            --card-bg-light: #fff;
+            --card-bg-dark: #23272f;
+            --text-light: #222;
+            --text-dark: #f5f7fa;
+            --accent: #2d8cf0;
+            --k-green: #00da3c;
+            --k-red: #ec0000;
+            --border-radius: 18px;
+        }
+        body {
+            background: var(--main-bg-light);
+            color: var(--text-light);
+            font-family: 'Segoe UI', 'PingFang TC', Arial, sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            transition: background 0.4s, color 0.4s;
+        }
+        body.dark {
+            background: var(--main-bg-dark);
+            color: var(--text-dark);
+        }
+        .dashboard {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 28px 10px 60px 10px;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 22px;
+        }
+        .header-title {
+            font-size: 2rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            color: var(--accent);
+        }
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .theme-btn {
+            background: #e3e7ed;
+            border: none;
+            border-radius: 50%;
+            width: 38px;
+            height: 38px;
+            font-size: 1.3rem;
+            color: #333;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .theme-btn.active, .theme-btn:hover {
+            background: var(--accent);
+            color: #fff;
+        }
+        body.dark .theme-btn {
+            background: #23272f;
+            color: #eee;
+        }
+        .kpi-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+        }
+        .kpi-card {
+            background: var(--card-bg-light);
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 12px rgba(77,157,224,0.07);
+            padding: 18px 24px;
+            min-width: 160px;
+            flex: 1 1 160px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            transition: background 0.4s;
+        }
+        body.dark .kpi-card {
+            background: var(--card-bg-dark);
+        }
+        .kpi-label {
+            font-size: 1.07rem;
+            color: #888;
+            margin-bottom: 7px;
+        }
+        .kpi-value {
+            font-size: 1.7rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        .kpi-value.up { color: var(--k-green); }
+        .kpi-value.down { color: var(--k-red); }
+        .main-card {
+            background: var(--card-bg-light);
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 12px rgba(77,157,224,0.07);
+            padding: 24px 16px 16px 16px;
+            transition: background 0.4s;
+        }
+        body.dark .main-card {
+            background: var(--card-bg-dark);
+        }
+        .chart-container {
+            height: 440px;
+            border-radius: 14px;
+            overflow: hidden;
+            background: rgba(220, 230, 240, 0.15);
+        }
+        body.dark .chart-container {
+            background: rgba(40, 40, 40, 0.25);
+        }
+        .status-row {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            margin-top: 12px;
+            font-size: 1.05rem;
+            color: var(--accent);
+        }
+        .trigger-panel {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+        .trigger-item {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            min-width: 120px;
+        }
+        .trigger-item label {
+            font-size: 1rem;
+            margin-bottom: 5px;
+            color: var(--accent);
+            font-weight: 600;
+        }
+        .trigger-item input {
+            width: 70px;
+            padding: 6px;
+            border-radius: 8px;
+            border: 1.5px solid #d0d7e2;
+            font-size: 1rem;
+            background: #f2f6fa;
+            color: #222;
+            transition: border 0.2s;
+        }
+        body.dark .trigger-item input {
+            background: #232526;
+            color: #f3f6fb;
+            border: 1.5px solid #4d9de0;
+        }
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        .trend-btn, .play-btn, .decision-btn {
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        .trend-btn, .play-btn {
+            background: #f0f0f0;
+            color: #222;
+            border: 1.5px solid #bbb;
+            border-radius: 8px;
+            min-width: 90px;
+            transition: background 0.2s, color 0.2s, border 0.2s;
+        }
+        .trend-btn:hover, .play-btn:hover {
+            background: #e0e0e0;
+            color: #111;
+            border-color: #888;
+        }
+        body.dark .trend-btn, body.dark .play-btn {
+            background: #23272f;
+            color: #eee;
+            border: 1.5px solid #444;
+        }
+        body.dark .trend-btn:hover, body.dark .play-btn:hover {
+            background: #333;
+            color: #fff;
+            border-color: #888;
+        }
+        .decision-btn {
+            background: transparent;
+            color: #222;
+            border: 1.5px solid #888;
+            min-width: 60px;
+            font-weight: 600;
+            display: none;
+            transition: all 0.3s ease;
+        }
+        .decision-btn:hover {
+            background: #ddd;
+            color: #000;
+            border-color: #555;
+        }
+        body.dark .decision-btn {
+            color: #fff !important;
+            border-color: #bbb;
+        }
+        body.dark .decision-btn:hover {
+            background: #444;
+            color: #fff;
+            border-color: #eee;
+        }
+        @media (max-width: 900px) {
+            .dashboard { padding: 8px 2vw; }
+            .kpi-row { gap: 8px; }
+            .kpi-card { padding: 12px 10px; }
+            .main-card { padding: 12px 4px 8px 4px; }
+            .trigger-panel { gap: 8px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="header">
+            <span class="header-title"><i class="fas fa-chart-area"></i> 台積電金融儀表板</span>
+            <div class="theme-toggle">
+                <button id="lightBtn" class="theme-btn" title="淺色模式"><i class="fas fa-sun"></i></button>
+                <button id="darkBtn" class="theme-btn" title="深色模式"><i class="fas fa-moon"></i></button>
+            </div>
+        </div>
+        <div class="kpi-row">
+            <div class="kpi-card">
+                <div class="kpi-label">本日收盤</div>
+                <div class="kpi-value up" id="kpi-close">--</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">漲跌幅</div>
+                <div class="kpi-value" id="kpi-change">--</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">成交量</div>
+                <div class="kpi-value" id="kpi-vol">--</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">均價</div>
+                <div class="kpi-value" id="kpi-avg">--</div>
+            </div>
+        </div>
+        <div class="main-card">
+            <div class="trigger-panel">
+                <div class="trigger-item">
+                    <label for="trigger-input1">觸發點1 (K線數量)</label>
+                    <input type="number" id="trigger-input1" min="5" max="50" value="20">
+                </div>
+                <div class="trigger-item">
+                    <label for="trigger-input2">觸發點2 (K線數量)</label>
+                    <input type="number" id="trigger-input2" min="5" max="50" value="30">
+                </div>
+                <div class="trigger-item">
+                    <label for="trigger-input3">觸發點3 (K線數量)</label>
+                    <input type="number" id="trigger-input3" min="5" max="50" value="40">
+                </div>
+            </div>
+            <div class="controls">
+                <button id="btn-tsmc" class="trend-btn"><i class="fas fa-microchip"></i> 台積電 (2330)</button>
+                <button id="btn-reset" class="trend-btn"><i class="fas fa-undo"></i> 重製</button>
+                <button id="btn-pause" class="play-btn"><i class="fas fa-play"></i></button>
+                <button id="btn-long" class="decision-btn">多</button>
+                <button id="btn-short" class="decision-btn">空</button>
+            </div>
+            <div class="chart-container" id="chart-container"></div>
+            <div class="status-row">
+                <span id="status-ticker">台積電 (2330)</span>
+                <span id="status-date"></span>
+            </div>
+        </div>
+    </div>
+    <script>
+        // 主題切換
+        const body = document.body;
+        const lightBtn = document.getElementById('lightBtn');
+        const darkBtn = document.getElementById('darkBtn');
+        let chartTheme = localStorage.getItem('fin-theme') || 'light';
+        function setTheme(theme) {
+            chartTheme = theme;
+            localStorage.setItem('fin-theme', theme);
+            body.classList.toggle('dark', theme === 'dark');
+            lightBtn.classList.toggle('active', theme === 'light');
+            darkBtn.classList.toggle('active', theme === 'dark');
+            if (window.myChart) window.myChart.dispose();
+            window.myChart = echarts.init(document.getElementById('chart-container'), theme);
+            renderChart();
+        }
+        lightBtn.onclick = () => setTheme('light');
+        darkBtn.onclick = () => setTheme('dark');
+
+        // 台積電範例資料
+        const tsmcData = [
+            [1020, 1025, 1015, 1030, 5000],[1055, 1030, 1025, 1055, 6500],[1035, 1045, 1030, 1045, 7000],[1055, 1040, 1030, 1055, 7100],[1045, 1040, 1035, 1050, 4200],
+            [1025, 1030, 1015, 1030, 3600],[1030, 1040, 1025, 1040, 5400],[1045, 1055, 1045, 1060, 6000],[1065, 1065, 1055, 1070, 6500],[1045, 1025, 1020, 1050, 4800],
+            [1005, 1005, 1000, 1010, 4000],[995, 997, 991, 997, 3900],[998, 1000, 991, 1000, 4100],[990, 974, 970, 990, 3500],[950, 960, 950, 965, 3200],
+            [946, 958, 946, 961, 3000],[967, 986, 967, 986, 4500],[967, 984, 967, 985, 4600],[965, 971, 961, 975, 4400],[976, 975, 975, 984, 4700],
+        ];
+        while (tsmcData.length < 100) tsmcData.push(...tsmcData.slice(0, Math.min(100 - tsmcData.length, tsmcData.length)));
+
+        // 狀態變數
+        let currentData = [];
+        let animationTimer = null;
+        let isPlaying = false;
+        let decisionMarkers = [];
+        let handledTriggers = {};
+        let pendingDecision = null;
+        let currentTsmcIndex = 0;
+
+        // 偏移量
+        const longOffset = 30;
+        const shortOffset = 30;
+
+        // 觸發點輸入
+        const triggerInput1 = document.getElementById('trigger-input1');
+        const triggerInput2 = document.getElementById('trigger-input2');
+        const triggerInput3 = document.getElementById('trigger-input3');
+
+        // 按鈕
+        const btnLong = document.getElementById('btn-long');
+        const btnShort = document.getElementById('btn-short');
+        const btnPause = document.getElementById('btn-pause');
+
+        // 初始化15根K線
+        function initKlines() {
+            currentData = [];
+            decisionMarkers = [];
+            handledTriggers = {};
+            pendingDecision = null;
+            
+            // 初始化15根K線
+            for (let i = 0; i < 15; i++) {
+                currentData.push(tsmcData[i]);
+                currentTsmcIndex = i;
+            }
+            
+            renderChart();
+            updateKPI(currentData.length - 1);
+            btnLong.style.display = 'none';
+            btnShort.style.display = 'none';
+            btnPause.style.display = 'inline-block';
+            
+            // 更新當前索引為最後一根K線的位置
+            currentTsmcIndex = 14;
+        }
+
+        function updateKPI(idx) {
+            if (idx < 0 || idx >= tsmcData.length) return;
+            const d = tsmcData[idx];
+            document.getElementById('kpi-close').textContent = d[1];
+            const prev = idx > 0 ? tsmcData[idx-1][1] : d[0];
+            const diff = d[1] - prev;
+            const pct = prev ? (diff/prev*100).toFixed(2) : '0.00';
+            document.getElementById('kpi-change').textContent = (diff >= 0 ? '+' : '') + diff + ' (' + pct + '%)';
+            document.getElementById('kpi-change').className = 'kpi-value ' + (diff >= 0 ? 'up' : 'down');
+            document.getElementById('kpi-vol').textContent = d[4];
+            document.getElementById('kpi-avg').textContent = (((d[1]+d[0]+d[2]+d[3])/4)|0);
+            document.getElementById('status-date').textContent = '第' + (idx+1) + '根';
+        }
+
+        function renderChart() {
+            if (!window.myChart) window.myChart = echarts.init(document.getElementById('chart-container'), chartTheme);
+            const dates = currentData.map((_, i) => `D${i+1}`);
+            window.myChart.setOption({
+                title: {
+                    text: '台積電(2330)股票K線圖',
+                    left: 'center',
+                    top: 10,
+                    textStyle: {
+                        color: chartTheme === 'dark' ? '#fff' : '#222',
+                        fontWeight: 'bold',
+                        fontSize: 20
+                    }
+                },
+                xAxis: {
+                    type: 'category',
+                    data: dates,
+                    axisLine: { lineStyle: { color: chartTheme === 'dark' ? '#aaa' : '#222' } },
+                    axisLabel: { color: chartTheme === 'dark' ? '#aaa' : '#222' }
+                },
+                yAxis: {
+                    scale: true,
+                    splitLine: { lineStyle: { color: chartTheme === 'dark' ? '#333' : '#eee' } },
+                    axisLine: { lineStyle: { color: chartTheme === 'dark' ? '#aaa' : '#222' } },
+                    axisLabel: { color: chartTheme === 'dark' ? '#aaa' : '#222' }
+                },
+                series: [{
+                    type: 'candlestick',
+                    data: currentData.map(d => d.slice(0,4)),
+                    itemStyle: {
+                        color: 'rgba(236, 0, 0, 0.5)',      // 黯淡紅
+                        color0: 'rgba(0, 218, 60, 0.5)',    // 黯淡綠
+                        borderColor: 'rgba(236, 0, 0, 0.5)',
+                        borderColor0: 'rgba(0, 218, 60, 0.5)'
+                    },
+                    markPoint: {
+                        symbol: 'arrow',
+                        symbolSize: 20,
+                        data: decisionMarkers
+                    }
+                }],
+                tooltip: { trigger: 'axis' }
+            });
+            updateKPI(currentData.length - 1);
+        }
+
+        function addNextKline() {
+            const triggerPoints = [
+                parseInt(triggerInput1.value) || 20,
+                parseInt(triggerInput2.value) || 30,
+                parseInt(triggerInput3.value) || 40
+            ];
+            
+            for (const trigger of triggerPoints) {
+                if (currentData.length === trigger && !handledTriggers[trigger]) {
+                    clearInterval(animationTimer);
+                    isPlaying = false;
+                    updatePlayButton();
+                    btnLong.style.display = 'inline-block';
+                    btnShort.style.display = 'inline-block';
+                    btnPause.style.display = 'none';
+                    handledTriggers[trigger] = true;
+                    pendingDecision = trigger;
+                    return;
+                }
+            }
+            
+            if (currentData.length >= 100) {
+                clearInterval(animationTimer);
+                isPlaying = false;
+                updatePlayButton();
+                return;
+            }
+            
+            // 從當前位置繼續添加K線
+            currentTsmcIndex = (currentTsmcIndex + 1) % tsmcData.length;
+            currentData.push(tsmcData[currentTsmcIndex]);
+            renderChart();
+        }
+
+        function updatePlayButton() {
+            const btnIcon = btnPause.querySelector('i');
+            btnIcon.className = isPlaying ? 'fas fa-pause' : 'fas fa-play';
+        }
+
+        function toggleAnimation() {
+            isPlaying = !isPlaying;
+            updatePlayButton();
+            if (isPlaying) {
+                animationTimer = setInterval(() => {
+                    addNextKline();
+                    updateKPI(currentData.length - 1);
+                }, 500);
+            } else {
+                clearInterval(animationTimer);
+            }
+        }
+
+        // 重製函數，調用initKlines()來恢復15根K線
+        function resetChart() {
+            clearInterval(animationTimer);
+            isPlaying = false;
+            updatePlayButton();
+            initKlines(); // 調用初始化函數恢復15根K線
+        }
+
+        function addDecisionMarker(decisionType) {
+            if (!pendingDecision) return;
+            const markerIndex = pendingDecision - 1;
+            if (currentData.length > markerIndex) {
+                const kline = currentData[markerIndex];
+                const highPrice = kline[3];
+                const lowPrice = kline[2];
+                const isLong = decisionType === 'long';
+                const labelColor = document.body.classList.contains('dark') ? '#fff' : '#000';
+                const marker = {
+                    coord: [
+                        markerIndex,
+                        isLong ? highPrice + longOffset : lowPrice - shortOffset
+                    ],
+                    symbol: 'arrow',
+                    symbolSize: 20,
+                    symbolRotate: isLong ? 0 : 180,
+                    itemStyle: {
+                        color: isLong ? 'rgba(236, 0, 0)' : 'rgba(0, 218, 60)'
+                    },
+                    label: {
+                        formatter: isLong ? '多' : '空',
+                        position: isLong ? 'bottom' : 'top',
+                        color: labelColor,
+                        fontSize: 12,
+                        fontWeight: 'bold'
+                    }
+                };
+                decisionMarkers.push(marker);
+                renderChart();
+                pendingDecision = null;
+            }
+        }
+
+        document.getElementById('btn-tsmc').addEventListener('click', () => {
+            if (!isPlaying) addNextKline();
+        });
+        btnPause.addEventListener('click', toggleAnimation);
+        document.getElementById('btn-reset').addEventListener('click', resetChart);
+
+        btnLong.addEventListener('click', function() {
+            btnLong.style.display = 'none';
+            btnShort.style.display = 'none';
+            btnPause.style.display = 'inline-block';
+            if (animationTimer) clearInterval(animationTimer);
+            isPlaying = true;
+            updatePlayButton();
+            addDecisionMarker('long');
+            addNextKline();
+            animationTimer = setInterval(() => {
+                addNextKline();
+                updateKPI(currentData.length - 1);
+            }, 500);
+        });
+        btnShort.addEventListener('click', function() {
+            btnLong.style.display = 'none';
+            btnShort.style.display = 'none';
+            btnPause.style.display = 'inline-block';
+            if (animationTimer) clearInterval(animationTimer);
+            isPlaying = true;
+            updatePlayButton();
+            addDecisionMarker('short');
+            addNextKline();
+            animationTimer = setInterval(() => {
+                addNextKline();
+                updateKPI(currentData.length - 1);
+            }, 500);
+        });
+
+        // 初始化主題與圖表
+        setTheme(chartTheme);
+        initKlines(); // 程式啟動時初始化15根K線
+
+        // 響應式
+        window.addEventListener('resize', () => window.myChart && window.myChart.resize());
+    </script>
+</body>
+</html>
