@@ -2,11 +2,9 @@
 <html lang="zh-TW">
 <head>
     <meta charset="utf-8">
-    <title>台積電金融儀表板</title>
+    <title>台積電金融交易儀表板</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- ECharts CDN -->
     <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
-    <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -174,16 +172,14 @@
             margin-bottom: 10px;
             flex-wrap: wrap;
         }
-        .trend-btn, .play-btn, .decision-btn {
-            font-weight: 600;
-            letter-spacing: 1px;
-        }
         .trend-btn, .play-btn {
             background: #f0f0f0;
             color: #222;
             border: 1.5px solid #bbb;
             border-radius: 8px;
             min-width: 90px;
+            font-weight: 600;
+            letter-spacing: 1px;
             transition: background 0.2s, color 0.2s, border 0.2s;
         }
         .trend-btn:hover, .play-btn:hover {
@@ -201,28 +197,157 @@
             color: #fff;
             border-color: #888;
         }
+        /* 多空按鈕與輸入欄位 */
+        .decision-row {
+            display: flex;
+            width: 100%;
+            margin: 18px 0 0 0;
+            max-width: 100%;
+            gap: 10px; /* 這裡的 gap 決定兩個組之間的距離 */
+        }
+        .decision-group {
+            flex: 1 1 0;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 6px; /* 這裡的 gap 決定按鈕和輸入欄位之間的距離 */
+        }
         .decision-btn {
-            background: transparent;
-            color: #222;
-            border: 1.5px solid #888;
-            min-width: 60px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2rem;
             font-weight: 600;
+            height: 56px;
+            width: 100%;
             display: none;
-            transition: all 0.3s ease;
+            transition: background 0.2s, color 0.2s;
+            letter-spacing: 2px;
         }
-        .decision-btn:hover {
-            background: #ddd;
-            color: #000;
-            border-color: #555;
+        .long-btn {
+            background: rgba(236,0,0,0.15);
+            color: #b22222;
         }
-        body.dark .decision-btn {
-            color: #fff !important;
-            border-color: #bbb;
-        }
-        body.dark .decision-btn:hover {
-            background: #444;
+        .long-btn:hover {
+            background: rgba(236,0,0,0.25);
             color: #fff;
-            border-color: #eee;
+        }
+        .short-btn {
+            background: rgba(0,218,60,0.15);
+            color: #1c6b3c;
+        }
+        .short-btn:hover {
+            background: rgba(0,218,60,0.25);
+            color: #fff;
+        }
+        body.dark .long-btn {
+            background: rgba(236,0,0,0.25);
+            color: #ffbdbd;
+        }
+        body.dark .short-btn {
+            background: rgba(0,218,60,0.25);
+            color: #b7ffd6;
+        }
+        body.dark .long-btn:hover,
+        body.dark .short-btn:hover {
+            color: #fff;
+        }
+        .quantity-input {
+            width: 100%;
+            padding: 8px;
+            border-radius: 8px;
+            border: 1px solid #d0d7e2;
+            text-align: center;
+            background: #f8f9fa;
+            font-size: 0.95rem;
+            transition: border 0.2s;
+        }
+        /* 1. 讓 input 不會因 spinner 壓縮內容 */
+        .quantity-input {
+            box-sizing: border-box;
+            width: 100%;
+            min-width: 0;
+            padding-right: 28px; /* 預留 spinner 空間，避免數字被蓋住 */
+        }
+
+        /* 2. 隱藏數字 input 的上下箭頭（可選） */
+        .quantity-input::-webkit-outer-spin-button,
+        .quantity-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .quantity-input[type=number] {
+            -moz-appearance: textfield; /* Firefox */
+        }
+
+        /* 3. 響應式下讓 .decision-group 佔滿一行 */
+        @media (max-width: 900px) {
+            .decision-row { flex-direction: column; gap: 10px; }
+            .decision-group { width: 100%; }
+        }
+        body.dark .quantity-input {
+            background: #2a2e36;
+            border: 1px solid #4d9de0;
+            color: #f3f6fb;
+        }
+        /* 持倉資訊區域 */
+        .position-info {
+            background: rgba(240, 240, 240, 0.5);
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        body.dark .position-info {
+            background: rgba(40, 40, 40, 0.3);
+        }
+        .position-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 10px;
+            background: rgba(230, 240, 255, 0.3);
+            border-radius: 8px;
+            font-size: 0.95rem;
+        }
+        .position-col {
+            flex: 1 1 0;
+            min-width: 0;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            /* 讓內容不會超出 */
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .position-item.wide {
+            grid-column: 1 / span 2;
+        }
+        body.dark .position-item {
+            background: rgba(30, 40, 60, 0.3);
+        }
+        .position-label {
+            font-weight: 600;
+            color: #555;
+        }
+        body.dark .position-label {
+            color: #aaa;
+        }
+        .position-value {
+            font-weight: 500;
+            color: #222;
+            text-align: center;   /* 只讓數字置中 */
+            width: 95%;          /* 讓數字在欄位內水平置中 */
+            display: inline-block; /* 保證 text-align 生效 */
+        }
+        body.dark .position-value {
+            color: #eee;
+        }
+        .position-value.positive {
+            color: #00da3c;
+        }
+        .position-value.negative {
+            color: #ec0000;
         }
         @media (max-width: 900px) {
             .dashboard { padding: 8px 2vw; }
@@ -230,13 +355,16 @@
             .kpi-card { padding: 12px 10px; }
             .main-card { padding: 12px 4px 8px 4px; }
             .trigger-panel { gap: 8px; }
+            .decision-row { flex-direction: column; gap: 10px; }
+            .position-info { grid-template-columns: 1fr; }
+            .position-item.wide { grid-column: auto; }
         }
     </style>
 </head>
 <body>
     <div class="dashboard">
         <div class="header">
-            <span class="header-title"><i class="fas fa-chart-area"></i> 台積電金融儀表板</span>
+            <span class="header-title"><i class="fas fa-chart-area"></i> 台積電金融交易儀表板</span>
             <div class="theme-toggle">
                 <button id="lightBtn" class="theme-btn" title="淺色模式"><i class="fas fa-sun"></i></button>
                 <button id="darkBtn" class="theme-btn" title="深色模式"><i class="fas fa-moon"></i></button>
@@ -279,10 +407,44 @@
                 <button id="btn-tsmc" class="trend-btn"><i class="fas fa-microchip"></i> 台積電 (2330)</button>
                 <button id="btn-reset" class="trend-btn"><i class="fas fa-undo"></i> 重製</button>
                 <button id="btn-pause" class="play-btn"><i class="fas fa-play"></i></button>
-                <button id="btn-long" class="decision-btn">多</button>
-                <button id="btn-short" class="decision-btn">空</button>
             </div>
             <div class="chart-container" id="chart-container"></div>
+            <!-- 多空按鈕與輸入欄位 -->
+            <div class="decision-row">
+                <div class="decision-group">
+                    <button id="btn-long" class="decision-btn long-btn">多</button>
+                    <input type="number" class="quantity-input" id="long-input" min="1" value="1" placeholder="下單數量">
+                </div>
+                <div class="decision-group">
+                    <button id="btn-short" class="decision-btn short-btn">空</button>
+                    <input type="number" class="quantity-input" id="short-input" min="1" value="1" placeholder="下單數量">
+                </div>
+            </div>
+            <!-- 持倉資訊區塊 -->
+            <div class="position-info">
+                <div class="position-item wide">
+                    <span class="position-col">
+                        <span class="position-label">持倉數量：</span>
+                        <span class="position-value" id="position-qty">0</span>
+                    </span>
+                    <span class="position-col">
+                        <span class="position-label">方向：</span>
+                        <span class="position-value" id="position-dir">--</span>
+                    </span>
+                    <span class="position-col">
+                        <span class="position-label">均價：</span>
+                        <span class="position-value" id="position-avg">--</span>
+                    </span>
+                </div>
+                <!-- <div class="position-item">
+                    <span class="position-label">已實現損益：</span>
+                    <span class="position-value" id="realized-pnl">0元 (0%)</span>
+                </div> -->
+                <div class="position-item wide">
+                    <span class="position-label">損益：</span>
+                    <span class="position-value" id="unrealized-pnl">0元 (0%)</span>
+                </div>
+            </div>
             <div class="status-row">
                 <span id="status-ticker">台積電 (2330)</span>
                 <span id="status-date"></span>
@@ -303,20 +465,18 @@
             darkBtn.classList.toggle('active', theme === 'dark');
             if (window.myChart) window.myChart.dispose();
             window.myChart = echarts.init(document.getElementById('chart-container'), theme);
+            const labelColor = theme === 'dark' ? '#fff' : '#000';
+            decisionMarkers.forEach(marker => {
+                if (marker.label) marker.label.color = labelColor;
+            });
             renderChart();
         }
         lightBtn.onclick = () => setTheme('light');
         darkBtn.onclick = () => setTheme('dark');
 
-        // 台積電範例資料
-        const tsmcData = [
-            [1020, 1025, 1015, 1030, 5000],[1055, 1030, 1025, 1055, 6500],[1035, 1045, 1030, 1045, 7000],[1055, 1040, 1030, 1055, 7100],[1045, 1040, 1035, 1050, 4200],
-            [1025, 1030, 1015, 1030, 3600],[1030, 1040, 1025, 1040, 5400],[1045, 1055, 1045, 1060, 6000],[1065, 1065, 1055, 1070, 6500],[1045, 1025, 1020, 1050, 4800],
-            [1005, 1005, 1000, 1010, 4000],[995, 997, 991, 997, 3900],[998, 1000, 991, 1000, 4100],[990, 974, 970, 990, 3500],[950, 960, 950, 965, 3200],
-            [946, 958, 946, 961, 3000],[967, 986, 967, 986, 4500],[967, 984, 967, 985, 4600],[965, 971, 961, 975, 4400],[976, 975, 975, 984, 4700],
-        ];
-        while (tsmcData.length < 100) tsmcData.push(...tsmcData.slice(0, Math.min(100 - tsmcData.length, tsmcData.length)));
-
+        // 台積電資料
+        let tsmcData = [];
+        
         // 狀態變數
         let currentData = [];
         let animationTimer = null;
@@ -325,6 +485,16 @@
         let handledTriggers = {};
         let pendingDecision = null;
         let currentTsmcIndex = 0;
+        
+        // 持倉狀態
+        let position = {
+            quantity: 0,          // 持倉數量
+            entryPrice: 0,       // 進場價格
+            direction: null,     // 'long' or 'short'
+            // realizedPnl: 0,      // 已實現損益
+            unrealizedPnl: 0,    // 損益
+            unrealizedPnlPct: 0  // 損益百分比
+        };
 
         // 偏移量
         const longOffset = 30;
@@ -339,6 +509,39 @@
         const btnLong = document.getElementById('btn-long');
         const btnShort = document.getElementById('btn-short');
         const btnPause = document.getElementById('btn-pause');
+        
+        // 下單數量輸入
+        const longInput = document.getElementById('long-input');
+        const shortInput = document.getElementById('short-input');
+
+        // 從2330.json載入資料
+        async function loadTsmcData() {
+            try {
+                const response = await fetch('2330.json');
+                if (!response.ok) {
+                    throw new Error('2330.json 載入失敗');
+                }
+                tsmcData = await response.json();
+                console.log('K線資料載入成功，共', tsmcData.length, '筆');
+                
+                // 初始化圖表
+                initKlines();
+            } catch (error) {
+                console.error('資料載入錯誤:', error);
+                alert('K線資料載入失敗，請檢查2330.json檔案');
+                // 使用預設資料作為後備
+                tsmcData = [
+                    [1020, 1025, 1015, 1030, 5000],[1055, 1030, 1025, 1055, 6500],[1035, 1045, 1030, 1045, 7000],
+                    [1055, 1040, 1030, 1055, 7100],[1045, 1040, 1035, 1050, 4200],[1025, 1030, 1015, 1030, 3600],
+                    [1030, 1040, 1025, 1040, 5400],[1045, 1055, 1045, 1060, 4000],[1065, 1065, 1055, 1070, 6500],
+                    [1045, 1025, 1020, 1050, 4800],[1005, 1005, 1000, 1010, 4000],[995, 997, 991, 997, 3900],
+                    [998, 1000, 991, 1000, 4100],[990, 974, 970, 990, 3500],[950, 960, 950, 965, 3200],
+                    [946, 958, 946, 961, 3000],[967, 986, 967, 986, 4500],[967, 984, 967, 985, 4600],
+                    [965, 971, 961, 975, 4400],[976, 975, 975, 984, 4700]
+                ];
+                initKlines();
+            }
+        }
 
         // 初始化15根K線
         function initKlines() {
@@ -349,18 +552,25 @@
             
             // 初始化15根K線
             for (let i = 0; i < 15; i++) {
-                currentData.push(tsmcData[i]);
-                currentTsmcIndex = i;
+                if (i < tsmcData.length) {
+                    currentData.push(tsmcData[i]);
+                    currentTsmcIndex = i;
+                }
             }
             
             renderChart();
             updateKPI(currentData.length - 1);
             btnLong.style.display = 'none';
             btnShort.style.display = 'none';
+            longInput.style.display = 'none';
+            shortInput.style.display = 'none';
             btnPause.style.display = 'inline-block';
             
             // 更新當前索引為最後一根K線的位置
-            currentTsmcIndex = 14;
+            currentTsmcIndex = Math.min(14, tsmcData.length - 1);
+            
+            // 重置持倉
+            resetPosition();
         }
 
         function updateKPI(idx) {
@@ -380,6 +590,10 @@
         function renderChart() {
             if (!window.myChart) window.myChart = echarts.init(document.getElementById('chart-container'), chartTheme);
             const dates = currentData.map((_, i) => `D${i+1}`);
+                // 依主題決定透明度
+            const isLight = chartTheme === 'light';
+            const kRed = isLight ? 'rgba(236, 0, 0, 1)' : 'rgba(236, 0, 0, 0.5)';
+            const kGreen = isLight ? 'rgba(0, 218, 60, 1)' : 'rgba(0, 218, 60, 0.5)';
             window.myChart.setOption({
                 title: {
                     text: '台積電(2330)股票K線圖',
@@ -407,10 +621,10 @@
                     type: 'candlestick',
                     data: currentData.map(d => d.slice(0,4)),
                     itemStyle: {
-                        color: 'rgba(236, 0, 0, 0.5)',      // 黯淡紅
-                        color0: 'rgba(0, 218, 60, 0.5)',    // 黯淡綠
-                        borderColor: 'rgba(236, 0, 0, 0.5)',
-                        borderColor0: 'rgba(0, 218, 60, 0.5)'
+                        color: kRed,      // 紅K
+                        color0: kGreen,   // 綠K
+                        borderColor: kRed,
+                        borderColor0: kGreen
                     },
                     markPoint: {
                         symbol: 'arrow',
@@ -418,9 +632,45 @@
                         data: decisionMarkers
                     }
                 }],
-                tooltip: { trigger: 'axis' }
+                xAxis: {
+                    type: 'category',
+                    data: dates,
+                    axisLine: { lineStyle: { color: chartTheme === 'dark' ? '#aaa' : '#222' } },
+                    axisLabel: { color: chartTheme === 'dark' ? '#aaa' : '#222' },
+                    axisPointer: {
+                        show: true,
+                        type: 'shadow'
+                    }
+                },
+                yAxis: {
+                    scale: true,
+                    splitLine: { lineStyle: { color: chartTheme === 'dark' ? '#333' : '#eee' } },
+                    axisLine: { lineStyle: { color: chartTheme === 'dark' ? '#aaa' : '#222' } },
+                    axisLabel: { color: chartTheme === 'dark' ? '#aaa' : '#222' },
+                    axisPointer: {
+                        show: true,
+                        label: {
+                            show: true,
+                            backgroundColor: chartTheme === 'dark' ? '#444' : '#eee',
+                            color: chartTheme === 'dark' ? '#fff' : '#222',
+                            fontWeight: 'bold'
+                        },
+                        lineStyle: {
+                            color: chartTheme === 'dark' ? '#aaa' : '#222',
+                            width: 1
+                        }
+                    }
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'cross',
+                        crossStyle: {
+                            color: chartTheme === 'dark' ? '#aaa' : '#222'
+                        }
+                    }
+                }
             });
-            updateKPI(currentData.length - 1);
         }
 
         function addNextKline() {
@@ -429,32 +679,33 @@
                 parseInt(triggerInput2.value) || 30,
                 parseInt(triggerInput3.value) || 40
             ];
-            
             for (const trigger of triggerPoints) {
                 if (currentData.length === trigger && !handledTriggers[trigger]) {
                     clearInterval(animationTimer);
                     isPlaying = false;
                     updatePlayButton();
-                    btnLong.style.display = 'inline-block';
-                    btnShort.style.display = 'inline-block';
+                    btnLong.style.display = 'block';
+                    btnShort.style.display = 'block';
+                    longInput.style.display = 'block';
+                    shortInput.style.display = 'block';
                     btnPause.style.display = 'none';
                     handledTriggers[trigger] = true;
                     pendingDecision = trigger;
                     return;
                 }
             }
-            
-            if (currentData.length >= 100) {
+            if (currentData.length >= tsmcData.length) {
                 clearInterval(animationTimer);
                 isPlaying = false;
                 updatePlayButton();
                 return;
             }
-            
-            // 從當前位置繼續添加K線
             currentTsmcIndex = (currentTsmcIndex + 1) % tsmcData.length;
             currentData.push(tsmcData[currentTsmcIndex]);
             renderChart();
+            
+            // 更新損益
+            updateUnrealizedPnl();
         }
 
         function updatePlayButton() {
@@ -475,12 +726,14 @@
             }
         }
 
-        // 重製函數，調用initKlines()來恢復15根K線
         function resetChart() {
             clearInterval(animationTimer);
+            currentData = [];
+            currentTsmcIndex = 0;
             isPlaying = false;
             updatePlayButton();
-            initKlines(); // 調用初始化函數恢復15根K線
+            btnPause.style.display = 'inline-block';
+            initKlines();
         }
 
         function addDecisionMarker(decisionType) {
@@ -492,6 +745,10 @@
                 const lowPrice = kline[2];
                 const isLong = decisionType === 'long';
                 const labelColor = document.body.classList.contains('dark') ? '#fff' : '#000';
+
+                // 取得下單數量
+                const qty = isLong ? (longInput.value || 1) : (shortInput.value || 1);
+
                 const marker = {
                     coord: [
                         markerIndex,
@@ -501,20 +758,112 @@
                     symbolSize: 20,
                     symbolRotate: isLong ? 0 : 180,
                     itemStyle: {
-                        color: isLong ? 'rgba(236, 0, 0)' : 'rgba(0, 218, 60)'
+                        color: isLong ? 'rgba(236, 0, 0, 1)' : 'rgba(0, 218, 60, 1)'
                     },
                     label: {
-                        formatter: isLong ? '多' : '空',
+                        // 多：文字在上，數量在下；空：數量在上，文字在下
+                        formatter: isLong ? `多\n${qty}` : `${qty}\n空`,
                         position: isLong ? 'bottom' : 'top',
                         color: labelColor,
                         fontSize: 12,
-                        fontWeight: 'bold'
+                        fontWeight: 'bold',
+                        lineHeight: 16
                     }
                 };
                 decisionMarkers.push(marker);
                 renderChart();
                 pendingDecision = null;
             }
+        }
+        
+        // 持倉相關函數
+        function resetPosition() {
+            position = {
+                quantity: 0,
+                entryPrice: 0,
+                direction: null,
+                unrealizedPnl: 0,
+                unrealizedPnlPct: 0
+            };
+            updatePositionDisplay();
+        }
+        
+        function openPosition(direction, quantity) {
+            const currentPrice = currentData[currentData.length - 2][1]; // 使用最新收盤價
+            quantity = Math.max(1, parseInt(quantity) || 1);
+
+            // 沒有持倉，直接開新倉
+            if (position.quantity === 0 || !position.direction) {
+                position.quantity = quantity;
+                position.direction = direction;
+                position.entryPrice = currentPrice;
+            } else if (position.direction === direction) {
+                // 同方向，加倉，均價用加權平均
+                const totalQty = position.quantity + quantity;
+                position.entryPrice = (
+                    (position.entryPrice * position.quantity + currentPrice * quantity) / totalQty
+                );
+                position.quantity = totalQty;
+                // direction 不變
+            } else {
+                // 反向下單，先互抵
+                if (quantity > position.quantity) {
+                    // 反向單大於原持倉，抵消後剩餘為新方向
+                    position.quantity = quantity - position.quantity;
+                    position.direction = direction;
+                    position.entryPrice = currentPrice;
+                } else if (quantity === position.quantity) {
+                    // 剛好抵消，歸零
+                    position.quantity = 0;
+                    position.direction = null;
+                    position.entryPrice = 0;
+                } else {
+                    // 反向單小於原持倉，剩餘為原方向
+                    position.quantity = position.quantity - quantity;
+                    // direction與entryPrice不變
+                }
+            }
+
+            updatePositionDisplay();
+        }
+        
+        function updateUnrealizedPnl() {
+            if (position.quantity === 0) return;
+
+            const currentPrice = currentData[currentData.length - 1][1]; // 最新收盤價
+            let pnl = 0;
+
+            if (position.direction === 'long') {
+                pnl = (currentPrice - position.entryPrice) * position.quantity;
+            } else if (position.direction === 'short') {
+                pnl = (position.entryPrice - currentPrice) * position.quantity;
+            }
+
+            const cost = position.entryPrice * position.quantity;
+            const pnlPct = cost ? (pnl / cost * 100).toFixed(2) : '0.00';
+
+            position.unrealizedPnl = pnl;
+            position.unrealizedPnlPct = pnlPct;
+
+            updatePositionDisplay();
+        }
+        
+        function updatePositionDisplay() {
+            document.getElementById('position-qty').textContent = Math.max(0, position.quantity);
+
+            // 方向
+            let dirText = '--';
+            if (position.quantity > 0 && position.direction === 'long') dirText = '多';
+            if (position.quantity > 0 && position.direction === 'short') dirText = '空';
+            document.getElementById('position-dir').textContent = dirText;
+
+            // 均價
+            document.getElementById('position-avg').textContent = position.entryPrice > 0 ? position.entryPrice : '--';
+
+            // 損益
+            const unrealizedDisplay = position.unrealizedPnl.toFixed(2) + "元 (" + position.unrealizedPnlPct + "%)";
+            document.getElementById('unrealized-pnl').textContent = unrealizedDisplay;
+            document.getElementById('unrealized-pnl').className = position.unrealizedPnl >= 0 ? 'position-value positive' : 'position-value negative';
         }
 
         document.getElementById('btn-tsmc').addEventListener('click', () => {
@@ -526,12 +875,18 @@
         btnLong.addEventListener('click', function() {
             btnLong.style.display = 'none';
             btnShort.style.display = 'none';
+            longInput.style.display = 'none';
+            shortInput.style.display = 'none';
             btnPause.style.display = 'inline-block';
             if (animationTimer) clearInterval(animationTimer);
             isPlaying = true;
             updatePlayButton();
             addDecisionMarker('long');
             addNextKline();
+            
+            // 開多倉
+            openPosition('long', longInput.value || 1);
+            
             animationTimer = setInterval(() => {
                 addNextKline();
                 updateKPI(currentData.length - 1);
@@ -540,12 +895,18 @@
         btnShort.addEventListener('click', function() {
             btnLong.style.display = 'none';
             btnShort.style.display = 'none';
+            longInput.style.display = 'none';
+            shortInput.style.display = 'none';
             btnPause.style.display = 'inline-block';
             if (animationTimer) clearInterval(animationTimer);
             isPlaying = true;
             updatePlayButton();
             addDecisionMarker('short');
             addNextKline();
+            
+            // 開空倉
+            openPosition('short', shortInput.value || 1);
+            
             animationTimer = setInterval(() => {
                 addNextKline();
                 updateKPI(currentData.length - 1);
@@ -554,7 +915,9 @@
 
         // 初始化主題與圖表
         setTheme(chartTheme);
-        initKlines(); // 程式啟動時初始化15根K線
+        
+        // 載入K線資料
+        loadTsmcData();
 
         // 響應式
         window.addEventListener('resize', () => window.myChart && window.myChart.resize());
