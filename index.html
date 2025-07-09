@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>投資人格測驗 - 多K線圖版本</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- pdfmake CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <!-- ECharts CDN -->
+    <script defer src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+</head>
+<body>
+    <!-- 主題切換按鈕 -->
+    <button id="theme-toggle" class="theme-toggle" title="切換暗色/亮色模式">🌙</button>
+    
+    <div class="container">
+        <!-- 歡迎頁面 -->
+        <div id="welcome-section" class="section active">
+            <div class="welcome-card card">
+                <div class="card__body">
+                    <h1 class="welcome-title">投資人格測驗</h1>
+                    <p class="welcome-subtitle">多K線圖分析，深度了解您的投資風格</p>
+                    
+                    <div class="form-group">
+                        <label for="userName" class="form-label">請輸入您的姓名</label>
+                        <input type="text" id="userName" class="form-control" placeholder="請輸入姓名">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="initialFund" class="form-label">起始資金 (萬元)</label>
+                        <input type="number" id="initialFund" class="form-control" placeholder="請輸入起始資金" min="1">
+                    </div>
+                    
+                    <button id="startQuiz" class="btn btn--primary btn--full-width">開始測驗</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 問卷頁面 -->
+        <div id="quiz-section" class="section">
+            <div class="quiz-progress">
+                <div class="progress-bar">
+                    <div id="progress-fill" class="progress-fill"></div>
+                </div>
+                <div class="progress-text">
+                    <span id="current-question">1</span> / 20
+                </div>
+            </div>
+            
+            <div class="quiz-card card">
+                <div class="card__body">
+                    <!-- K線圖容器 -->
+                    <div id="chart-container" class="chart-container hidden">
+                        <div id="chart-title" class="chart-title">K線圖</div>
+                        <div class="chart-info">
+                            <div class="stock-info">
+                                <span class="stock-price" id="stock-price">--</span>
+                                <span class="stock-change" id="stock-change">--</span>
+                            </div>
+                        </div>
+                        <div id="echarts-kline" class="chart-widget"></div>
+                        <div class="loading-message" id="loading-message">載入圖表中...</div>
+                    </div>
+                    
+                    <h2 id="question-text" class="question-title"></h2>
+                    <div id="options-container" class="options-container">
+                        <!-- 動態生成選項 -->
+                    </div>
+                    <button id="nextQuestion" class="btn btn--primary btn--full-width" disabled>下一題</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 結果頁面 -->
+        <div id="results-section" class="section">
+            <div class="results-card card">
+                <div class="card__body">
+                    <h1 class="results-title">測驗結果</h1>
+                    
+                    <div class="user-info">
+                        <p><strong>姓名：</strong><span id="result-name"></span></p>
+                        <p><strong>起始資金：</strong><span id="result-initial-fund"></span> 萬元</p>
+                        <p><strong>最終資金：</strong><span id="result-final-fund"></span> 萬元</p>
+                        <p><strong>總得分：</strong><span id="result-total-score"></span> 分</p>
+                    </div>
+                    
+                    <div id="personality-results" class="personality-results">
+                        <!-- 動態生成人格分析 -->
+                    </div>
+                    
+                    <div class="result-chart-container">
+                        <h3>投資人格分布圖</h3>
+                        <div id="personality-chart" class="personality-chart">
+                            <!-- 動態生成圖表 -->
+                        </div>
+                    </div>
+                    
+                    <button id="downloadPDF" class="btn btn--secondary btn--full-width">下載PDF報告</button>
+                    <button id="showAnswers" class="btn btn--secondary btn--full-width">查看答題記錄</button>
+                    <button id="restartQuiz" class="btn btn--primary btn--full-width">重新開始</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 答題記錄頁面 -->
+        <div id="answers-section" class="section">
+            <div class="answers-card card">
+                <div class="card__body">
+                    <h2 class="answers-title">答題記錄</h2>
+                    <div id="answers-list" class="answers-list">
+                        <!-- 動態生成答題記錄 -->
+                    </div>
+                    <button id="backToResults" class="btn btn--secondary btn--full-width">返回結果</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
