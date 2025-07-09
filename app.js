@@ -1,19 +1,3 @@
-// pdfMake 中文字型設定
-pdfMake.fonts = {
-  Roboto: {
-    normal: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/fonts/Roboto-Regular.ttf',
-    bold: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/fonts/Roboto-Medium.ttf',
-    italics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/fonts/Roboto-Italic.ttf',
-    bolditalics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/fonts/Roboto-MediumItalic.ttf'
-  },
-  NotoSansTC: {
-    normal: 'https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400&display=swap',
-    bold: 'https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@700&display=swap',
-    italics: 'https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400&display=swap',
-    bolditalics: 'https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@700&display=swap'
-  }
-};
-
 // 人格類型定義
 const personalityTypes = {
     "A": {
@@ -53,209 +37,209 @@ const questions = [
             { text: "完全不考慮, 風險太高", points: 2, personalities: ["D"] }
         ]
     },
-    // {
-    //     id: 2,
-    //     text: "市場突然大跌20%, 您會如何反應？",
-    //     showChart: false,
-    //     options: [
-    //         { text: "立即賣出所有股票避免更大損失", points: -10, personalities: ["A"] },
-    //         { text: "保持觀望, 等待市場回穩", points: 0, personalities: ["D"] },
-    //         { text: "分批加碼買進, 認為是好機會", points: 15, personalities: ["B"] },
-    //         { text: "全部資金進場, 大賺一筆", points: 25, personalities: ["C"] }
-    //     ]
-    // },
-    // {
-    //     id: 3,
-    //     text: "根據鴻海週K線圖, 您認為該如何操作？",
-    //     showChart: true,
-    //     klineJson: "kline2.json",
-    //     klineTitle: "鴻海 (2317) 週K線",
-    //     options: [
-    //         { text: "趨勢不明確, 暫不進場", points: 4, personalities: ["A"] },
-    //         { text: "可能是短期調整, 適合逢低買進", points: 10, personalities: ["B"] },
-    //         { text: "突破在即, 應該大膽進場", points: 18, personalities: ["C"] },
-    //         { text: "太複雜了, 我看不懂", points: 0, personalities: ["D"] }
-    //     ]
-    // },
-    // {
-    //     id: 4,
-    //     text: "您傾向於選擇哪種投資組合？",
-    //     showChart: false,
-    //     options: [
-    //         { text: "80%定存 + 20%政府債券", points: 5, personalities: ["A"] },
-    //         { text: "50%股票 + 30%債券 + 20%現金", points: 10, personalities: ["B"] },
-    //         { text: "70%個股 + 30%期貨選擇權", points: 20, personalities: ["C"] },
-    //         { text: "100%銀行存款", points: 0, personalities: ["D"] }
-    //     ]
-    // },
-    // {
-    //     id: 5,
-    //     text: "觀察聯發科日K線圖, 您的投資決策是？",
-    //     showChart: true,
-    //     klineJson: "kline3.json",
-    //     klineTitle: "聯發科 (2454) 日K線",
-    //     options: [
-    //         { text: "謹慎觀察, 等待更好時機", points: 5, personalities: ["A"] },
-    //         { text: "分批建倉, 控制風險", points: 8, personalities: ["B"] },
-    //         { text: "大膽進場, 把握趨勢", points: 15, personalities: ["C"] },
-    //         { text: "完全不考慮科技股", points: 2, personalities: ["D"] }
-    //     ]
-    // },
-    // // 繼續其他題目...
-    // {
-    //     id: 6,
-    //     text: "對於投資報酬率的期望？",
-    //     showChart: false,
-    //     options: [
-    //         { text: "年報酬率3-5%就很滿足", points: 3, personalities: ["A"] },
-    //         { text: "希望年報酬率8-12%", points: 8, personalities: ["B"] },
-    //         { text: "追求年報酬率20%以上", points: 15, personalities: ["C"] },
-    //         { text: "只要不虧錢就好", points: 0, personalities: ["D"] }
-    //     ]
-    // },
-    // {
-    //     id: 7,
-    //     text: "您會如何分配每月收入？",
-    //     showChart: false,
-    //     options: [
-    //         { text: "70%生活費 + 20%存款 + 10%投資", points: 5, personalities: ["A"] },
-    //         { text: "60%生活費 + 15%存款 + 25%投資", points: 10, personalities: ["B"] },
-    //         { text: "50%生活費 + 10%存款 + 40%投資", points: 18, personalities: ["C"] },
-    //         { text: "80%生活費 + 20%存款 + 0%投資", points: 2, personalities: ["D"] }
-    //     ]
-    // },
-    // {
-    //     id: 8,
-    //     text: "聽到朋友推薦某支飆股, 您會？",
-    //     showChart: false,
-    //     options: [
-    //         { text: "謝謝他, 但我不會貿然投資", points: 3, personalities: ["A"] },
-    //         { text: "研究後再決定是否投資", points: 8, personalities: ["B"] },
-    //         { text: "立即買進, 不想錯過機會", points: 20, personalities: ["C"] },
-    //         { text: "完全不感興趣", points: 0, personalities: ["D"] }
-    //     ]
-    // },
-    // {
-    //     id: 9,
-    //     text: "您對投資學習的態度？",
-    //     showChart: false,
-    //     options: [
-    //         { text: "定期閱讀投資書籍和報告", points: 8, personalities: ["A", "B"] },
-    //         { text: "關注市場消息和小道消息", points: 12, personalities: ["C"] },
-    //         { text: "偶爾看看財經新聞", points: 5, personalities: ["B"] },
-    //         { text: "不太關心投資知識", points: 0, personalities: ["D"] }
-    //     ]
-    // },
-    // {
-    //     id: 10,
-    //     text: "面對投資虧損20%, 您的心情？",
-    //     showChart: false,
-    //     options: [
-    //         { text: "非常焦慮, 睡不著覺", points: -5, personalities: ["A"] },
-    //         { text: "有些擔心, 但能接受", points: 5, personalities: ["B"] },
-    //         { text: "覺得刺激, 期待反彈", points: 15, personalities: ["C"] },
-    //         { text: "這就是為什麼我不投資", points: 0, personalities: ["D"] }
-    //     ]
-    // },
-    // {
-    //     id: 11,
-    //     text: "您認為投資最重要的原則是？",
-    //     showChart: false,
-    //     options: [
-    //         { text: "保本第一, 獲利第二", points: 3, personalities: ["A"] },
-    //         { text: "長期投資, 分散風險", points: 10, personalities: ["B"] },
-    //         { text: "膽大心細, 把握時機", points: 18, personalities: ["C"] },
-    //         { text: "不投資就沒有風險", points: 0, personalities: ["D"] }
-    //     ]
-    // },
-    // {
-    //     id: 12,
-    //     text: "您會投資加密貨幣嗎？",
-    //     showChart: false,
-    //     options: [
-    //         { text: "絕對不會, 風險太高", points: 0, personalities: ["A"] },
-    //         { text: "小額嘗試, 控制風險", points: 8, personalities: ["B"] },
-    //         { text: "大膽投資, 高風險高回報", points: 25, personalities: ["C"] },
-    //         { text: "完全不了解, 不考慮", points: 0, personalities: ["D"] }
-    //     ]
-    // },
-    // {
-    //     id: 13,
-    //     text: "退休理財規劃？",
-    //     showChart: false,
-    //     options: [
-    //         { text: "提早開始, 選擇穩健商品", points: 8, personalities: ["A"] },
-    //         { text: "定期定額投資基金", points: 10, personalities: ["B"] },
-    //         { text: "年輕時積極投資累積財富", points: 15, personalities: ["C"] },
-    //         { text: "退休金應該足夠了", points: 2, personalities: ["D"] }
-    //     ]
-    // },
-    // {
-    //     id: 14,
-    //     text: "您如何看待投資理財？",
-    //     showChart: false,
-    //     options: [
-    //         { text: "是人生必修課, 需要謹慎學習", points: 6, personalities: ["A"] },
-    //         { text: "是實現財富自由的途徑", points: 12, personalities: ["B"] },
-    //         { text: "是快速致富的機會", points: 20, personalities: ["C"] },
-    //         { text: "太複雜了, 不如存銀行", points: 1, personalities: ["D"] }
-    //     ]
-    // },
-    // {
-    //     id: 15,
-    //     text: "投資前您會花多少時間研究？",
-    //     showChart: false,
-    //     options: [
-    //         { text: "詳細研究一個月以上", points: 5, personalities: ["A"] },
-    //         { text: "研究一到兩週", points: 10, personalities: ["B"] },
-    //         { text: "快速瀏覽幾天", points: 15, personalities: ["C"] },
-    //         { text: "不會主動研究", points: 0, personalities: ["D"] }
-    //     ]
-    // },
-    // {
-    //     id: 16,
-    //     text: "您認為投資成功的關鍵是？",
-    //     showChart: false,
-    //     options: [
-    //         { text: "嚴格的風險控制", points: 4, personalities: ["A"] },
-    //         { text: "長期持有優質資產", points: 8, personalities: ["B"] },
-    //         { text: "準確判斷市場時機", points: 18, personalities: ["C"] },
-    //         { text: "運氣最重要", points: 3, personalities: ["D"] }
-    //     ]
-    // },
-    // {
-    //     id: 17,
-    //     text: "面對市場波動, 您的策略？",
-    //     showChart: false,
-    //     options: [
-    //         { text: "減少投資, 降低風險", points: 2, personalities: ["A"] },
-    //         { text: "維持既定投資計劃", points: 8, personalities: ["B"] },
-    //         { text: "加大投資力度, 趁機獲利", points: 20, personalities: ["C"] },
-    //         { text: "暫停所有投資", points: 0, personalities: ["D"] }
-    //     ]
-    // },
-    // {
-    //     id: 18,
-    //     text: "您願意為了高報酬承擔多大風險？",
-    //     showChart: false,
-    //     options: [
-    //         { text: "幾乎零風險", points: 1, personalities: ["A"] },
-    //         { text: "小到中等風險", points: 8, personalities: ["B"] },
-    //         { text: "高風險也能接受", points: 22, personalities: ["C"] },
-    //         { text: "不願意承擔任何風險", points: 0, personalities: ["D"] }
-    //     ]
-    // },
-    // {
-    //     id: 19,
-    //     text: "您的投資時間偏好？",
-    //     showChart: false,
-    //     options: [
-    //         { text: "長期投資, 5年以上", points: 6, personalities: ["A", "B"] },
-    //         { text: "中期投資, 1-3年", points: 10, personalities: ["B"] },
-    //         { text: "短期投資, 幾個月內", points: 18, personalities: ["C"] },
-    //         { text: "不確定, 沒有規劃", points: 0, personalities: ["D"] }
-    //     ]
-    // },
+    {
+        id: 2,
+        text: "市場突然大跌20%, 您會如何反應？",
+        showChart: false,
+        options: [
+            { text: "立即賣出所有股票避免更大損失", points: -10, personalities: ["A"] },
+            { text: "保持觀望, 等待市場回穩", points: 0, personalities: ["D"] },
+            { text: "分批加碼買進, 認為是好機會", points: 15, personalities: ["B"] },
+            { text: "全部資金進場, 大賺一筆", points: 25, personalities: ["C"] }
+        ]
+    },
+    {
+        id: 3,
+        text: "根據鴻海週K線圖, 您認為該如何操作？",
+        showChart: true,
+        klineJson: "kline2.json",
+        klineTitle: "鴻海 (2317) 週K線",
+        options: [
+            { text: "趨勢不明確, 暫不進場", points: 4, personalities: ["A"] },
+            { text: "可能是短期調整, 適合逢低買進", points: 10, personalities: ["B"] },
+            { text: "突破在即, 應該大膽進場", points: 18, personalities: ["C"] },
+            { text: "太複雜了, 我看不懂", points: 0, personalities: ["D"] }
+        ]
+    },
+    {
+        id: 4,
+        text: "您傾向於選擇哪種投資組合？",
+        showChart: false,
+        options: [
+            { text: "80%定存 + 20%政府債券", points: 5, personalities: ["A"] },
+            { text: "50%股票 + 30%債券 + 20%現金", points: 10, personalities: ["B"] },
+            { text: "70%個股 + 30%期貨選擇權", points: 20, personalities: ["C"] },
+            { text: "100%銀行存款", points: 0, personalities: ["D"] }
+        ]
+    },
+    {
+        id: 5,
+        text: "觀察聯發科日K線圖, 您的投資決策是？",
+        showChart: true,
+        klineJson: "kline3.json",
+        klineTitle: "聯發科 (2454) 日K線",
+        options: [
+            { text: "謹慎觀察, 等待更好時機", points: 5, personalities: ["A"] },
+            { text: "分批建倉, 控制風險", points: 8, personalities: ["B"] },
+            { text: "大膽進場, 把握趨勢", points: 15, personalities: ["C"] },
+            { text: "完全不考慮科技股", points: 2, personalities: ["D"] }
+        ]
+    },
+    // 繼續其他題目...
+    {
+        id: 6,
+        text: "對於投資報酬率的期望？",
+        showChart: false,
+        options: [
+            { text: "年報酬率3-5%就很滿足", points: 3, personalities: ["A"] },
+            { text: "希望年報酬率8-12%", points: 8, personalities: ["B"] },
+            { text: "追求年報酬率20%以上", points: 15, personalities: ["C"] },
+            { text: "只要不虧錢就好", points: 0, personalities: ["D"] }
+        ]
+    },
+    {
+        id: 7,
+        text: "您會如何分配每月收入？",
+        showChart: false,
+        options: [
+            { text: "70%生活費 + 20%存款 + 10%投資", points: 5, personalities: ["A"] },
+            { text: "60%生活費 + 15%存款 + 25%投資", points: 10, personalities: ["B"] },
+            { text: "50%生活費 + 10%存款 + 40%投資", points: 18, personalities: ["C"] },
+            { text: "80%生活費 + 20%存款 + 0%投資", points: 2, personalities: ["D"] }
+        ]
+    },
+    {
+        id: 8,
+        text: "聽到朋友推薦某支飆股, 您會？",
+        showChart: false,
+        options: [
+            { text: "謝謝他, 但我不會貿然投資", points: 3, personalities: ["A"] },
+            { text: "研究後再決定是否投資", points: 8, personalities: ["B"] },
+            { text: "立即買進, 不想錯過機會", points: 20, personalities: ["C"] },
+            { text: "完全不感興趣", points: 0, personalities: ["D"] }
+        ]
+    },
+    {
+        id: 9,
+        text: "您對投資學習的態度？",
+        showChart: false,
+        options: [
+            { text: "定期閱讀投資書籍和報告", points: 8, personalities: ["A", "B"] },
+            { text: "關注市場消息和小道消息", points: 12, personalities: ["C"] },
+            { text: "偶爾看看財經新聞", points: 5, personalities: ["B"] },
+            { text: "不太關心投資知識", points: 0, personalities: ["D"] }
+        ]
+    },
+    {
+        id: 10,
+        text: "面對投資虧損20%, 您的心情？",
+        showChart: false,
+        options: [
+            { text: "非常焦慮, 睡不著覺", points: -5, personalities: ["A"] },
+            { text: "有些擔心, 但能接受", points: 5, personalities: ["B"] },
+            { text: "覺得刺激, 期待反彈", points: 15, personalities: ["C"] },
+            { text: "這就是為什麼我不投資", points: 0, personalities: ["D"] }
+        ]
+    },
+    {
+        id: 11,
+        text: "您認為投資最重要的原則是？",
+        showChart: false,
+        options: [
+            { text: "保本第一, 獲利第二", points: 3, personalities: ["A"] },
+            { text: "長期投資, 分散風險", points: 10, personalities: ["B"] },
+            { text: "膽大心細, 把握時機", points: 18, personalities: ["C"] },
+            { text: "不投資就沒有風險", points: 0, personalities: ["D"] }
+        ]
+    },
+    {
+        id: 12,
+        text: "您會投資加密貨幣嗎？",
+        showChart: false,
+        options: [
+            { text: "絕對不會, 風險太高", points: 0, personalities: ["A"] },
+            { text: "小額嘗試, 控制風險", points: 8, personalities: ["B"] },
+            { text: "大膽投資, 高風險高回報", points: 25, personalities: ["C"] },
+            { text: "完全不了解, 不考慮", points: 0, personalities: ["D"] }
+        ]
+    },
+    {
+        id: 13,
+        text: "退休理財規劃？",
+        showChart: false,
+        options: [
+            { text: "提早開始, 選擇穩健商品", points: 8, personalities: ["A"] },
+            { text: "定期定額投資基金", points: 10, personalities: ["B"] },
+            { text: "年輕時積極投資累積財富", points: 15, personalities: ["C"] },
+            { text: "退休金應該足夠了", points: 2, personalities: ["D"] }
+        ]
+    },
+    {
+        id: 14,
+        text: "您如何看待投資理財？",
+        showChart: false,
+        options: [
+            { text: "是人生必修課, 需要謹慎學習", points: 6, personalities: ["A"] },
+            { text: "是實現財富自由的途徑", points: 12, personalities: ["B"] },
+            { text: "是快速致富的機會", points: 20, personalities: ["C"] },
+            { text: "太複雜了, 不如存銀行", points: 1, personalities: ["D"] }
+        ]
+    },
+    {
+        id: 15,
+        text: "投資前您會花多少時間研究？",
+        showChart: false,
+        options: [
+            { text: "詳細研究一個月以上", points: 5, personalities: ["A"] },
+            { text: "研究一到兩週", points: 10, personalities: ["B"] },
+            { text: "快速瀏覽幾天", points: 15, personalities: ["C"] },
+            { text: "不會主動研究", points: 0, personalities: ["D"] }
+        ]
+    },
+    {
+        id: 16,
+        text: "您認為投資成功的關鍵是？",
+        showChart: false,
+        options: [
+            { text: "嚴格的風險控制", points: 4, personalities: ["A"] },
+            { text: "長期持有優質資產", points: 8, personalities: ["B"] },
+            { text: "準確判斷市場時機", points: 18, personalities: ["C"] },
+            { text: "運氣最重要", points: 3, personalities: ["D"] }
+        ]
+    },
+    {
+        id: 17,
+        text: "面對市場波動, 您的策略？",
+        showChart: false,
+        options: [
+            { text: "減少投資, 降低風險", points: 2, personalities: ["A"] },
+            { text: "維持既定投資計劃", points: 8, personalities: ["B"] },
+            { text: "加大投資力度, 趁機獲利", points: 20, personalities: ["C"] },
+            { text: "暫停所有投資", points: 0, personalities: ["D"] }
+        ]
+    },
+    {
+        id: 18,
+        text: "您願意為了高報酬承擔多大風險？",
+        showChart: false,
+        options: [
+            { text: "幾乎零風險", points: 1, personalities: ["A"] },
+            { text: "小到中等風險", points: 8, personalities: ["B"] },
+            { text: "高風險也能接受", points: 22, personalities: ["C"] },
+            { text: "不願意承擔任何風險", points: 0, personalities: ["D"] }
+        ]
+    },
+    {
+        id: 19,
+        text: "您的投資時間偏好？",
+        showChart: false,
+        options: [
+            { text: "長期投資, 5年以上", points: 6, personalities: ["A", "B"] },
+            { text: "中期投資, 1-3年", points: 10, personalities: ["B"] },
+            { text: "短期投資, 幾個月內", points: 18, personalities: ["C"] },
+            { text: "不確定, 沒有規劃", points: 0, personalities: ["D"] }
+        ]
+    },
     {
         id: 20,
         text: "如果有100萬, 您會如何配置？",
@@ -288,14 +272,14 @@ const themeToggle = document.getElementById('theme-toggle');
 const chartContainer = document.getElementById('chart-container');
 
 // 在 app.js 開頭設定 pdfmake 字體
-// pdfMake.fonts = {
-//   NotoSansTC: {
-//     normal: 'https://unpkg.com/@fontsource/noto-sans-tc@4.5.11/files/noto-sans-tc-chinese-traditional-400-normal.woff2',
-//     bold: 'https://unpkg.com/@fontsource/noto-sans-tc@4.5.11/files/noto-sans-tc-chinese-traditional-700-normal.woff2',
-//     italics: 'https://unpkg.com/@fontsource/noto-sans-tc@4.5.11/files/noto-sans-tc-chinese-traditional-400-normal.woff2',
-//     bolditalics: 'https://unpkg.com/@fontsource/noto-sans-tc@4.5.11/files/noto-sans-tc-chinese-traditional-700-normal.woff2'
-//   }
-// };
+pdfMake.fonts = {
+  NotoSansTC: {
+    normal: 'https://unpkg.com/@fontsource/noto-sans-tc@4.5.11/files/noto-sans-tc-chinese-traditional-400-normal.woff2',
+    bold: 'https://unpkg.com/@fontsource/noto-sans-tc@4.5.11/files/noto-sans-tc-chinese-traditional-700-normal.woff2',
+    italics: 'https://unpkg.com/@fontsource/noto-sans-tc@4.5.11/files/noto-sans-tc-chinese-traditional-400-normal.woff2',
+    bolditalics: 'https://unpkg.com/@fontsource/noto-sans-tc@4.5.11/files/noto-sans-tc-chinese-traditional-700-normal.woff2'
+  }
+};
 
 
 
